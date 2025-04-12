@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Santri;
 use Illuminate\Http\Request;
 use \App\Models\User as Model;
 
 class WaliController extends Controller
 {
 
-    private $viewIndex = 'user_index' ;
+    private $viewIndex = 'wali_index' ;
     private $viewCreate = 'user_form' ;
     private $viewEdit = 'user_edit' ;
-    private $viewShow = 'user_show' ;
+    private $viewShow = 'wali_show' ;
     private $routePrefix = 'wali';
 
  
@@ -20,7 +21,7 @@ class WaliController extends Controller
      */
     public function index()
     {
-        return view('operator.dataUser.'.$this->viewIndex, [
+        return view('operator.dataWali.'.$this->viewIndex, [
             'models' => Model::where('akses', 'wali')
                 ->latest()
                 ->paginate(50),
@@ -71,7 +72,14 @@ class WaliController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return view('operator.dataWali.'.$this->viewShow, [
+            'santri' => Santri::whereNull('wali_id')->pluck('nama', 'id'),
+'model' => Model::with('santri')
+    ->where('akses', 'wali')
+    ->where('id', $id)
+    ->firstOrFail(),
+            'title' => 'Detail Data Wali Santri',
+        ]);
     }
 
     /**

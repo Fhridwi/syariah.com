@@ -18,11 +18,11 @@
                                 <i class="bx bx-search"></i>
                             </span>
                             {!! Form::text('search', request('search'), [
-                                'class' => 'form-control',
-                                'placeholder' => 'Cari data...',
-                                'aria-label' => 'Search...',
-                                'aria-describedby' => 'basic-addon-search31'
-                            ]) !!}
+        'class' => 'form-control',
+        'placeholder' => 'Cari data...',
+        'aria-label' => 'Search...',
+        'aria-describedby' => 'basic-addon-search31'
+    ]) !!}
                             <button type="submit" class="btn btn-sm btn-secondary">
                                 <i class="bx bx-search"></i> Cari
                             </button>
@@ -36,12 +36,9 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Wali Santri</th>
-                                    <th>Nama</th>
-                                    <th>NIS</th>
-                                    <th>Program</th>
-                                    <th>Angkatan</th>
-                                    <th>Status Wali</th>
+                                    <th>Nama Biaya</th>
+                                    <th>Jumlah</th>
+                                    <th>create by</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -49,12 +46,10 @@
                                 @forelse ($models as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->wali?->name ?? '-' }}<x/td>
-                                        <td>{{ $item->nama }}</td>
-                                        <td>{{ $item->nis }}</td>
-                                        <td>{{ $item->program }}</td>
-                                        <td>{{ $item->angkatan }}</td>
-                                        <td>{{ $item->wali_status ?? '-' }}</td>
+                                        <td>{{ $item->nama}}
+                                            <x /td>
+                                        <td>Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
+                                        <td>{{ $item->user_id }}</td>
                                         <td>
                                             <a href="{{ route($routePrefix . '.show', $item->id) }}"
                                                 class="btn btn-sm btn-info">

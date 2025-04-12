@@ -11,7 +11,7 @@ class UpdateSantriRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class UpdateSantriRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'wali_id' => 'nullable|exists:users,id',
+            'wali_status' => 'nullable|string|max:50',
+            'nama' => 'required|string|max:255',
+            'nis' => 'required|string|max:50|unique:santris,nis,' . $this->id,
+            'program' => 'required|string|max:100',
+            'angkatan' => 'required|string|max:10',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:5000',
         ];
     }
 }

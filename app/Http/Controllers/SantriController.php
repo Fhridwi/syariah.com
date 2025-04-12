@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSantriRequest;
+use App\Http\Requests\UpdateSantriRequest;
 use App\Models\Santri;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +24,8 @@ class SantriController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $santris = Santri::search($search)
+        $santris = Santri::with('wali')
+                         ->search($search)
                          ->latest()
                          ->paginate(50);
 
@@ -56,17 +59,9 @@ class SantriController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreSantriRequest $request)
     {
-        $requestData = $request->validate([
-            'wali_id' => 'nullable|exists:users,id',
-            'wali_status' => 'nullable|string|max:50',
-            'nama' => 'required|string|max:255',
-            'nis' => 'required|string|max:50|unique:santris,nis',
-            'program' => 'required|string|max:100',
-            'angkatan' => 'required|string|max:10',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:5000',
-        ]);
+        $requestData = $request->validated();
     
         // Simpan file foto jika ada
         if ($request->hasFile('foto')) {
@@ -123,17 +118,9 @@ class SantriController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Santri $santri)
+    public function update(UpdateSantriRequest $request, Santri $santri)
 {
-    $requestData = $request->validate([
-        'wali_id' => 'nullable|exists:users,id',
-        'wali_status' => 'nullable|string|max:50',
-        'nama' => 'required|string|max:255',
-        'nis' => 'required|string|max:50|unique:santris,nis,' . $santri->id,
-        'program' => 'required|string|max:100',
-        'angkatan' => 'required|string|max:10',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:5000',
-    ]);
+    $requestData = $request->validated();
 
     // Simpan file baru jika ada
     if ($request->hasFile('foto')) {

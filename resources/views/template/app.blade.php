@@ -237,13 +237,16 @@
 
     {{-- Select 2 --}}
     <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.mask.js') }}"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+
     <script>
         $(document).ready(function() {
-    $('.select2').select2();
+          $('.rupiah').mask('000,000.000', { reverse: true });
+          $('.select2').select2();
 });
     </script>
   </body>
