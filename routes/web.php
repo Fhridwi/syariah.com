@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\BerandaOperatorController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WaliController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +21,38 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('coba', function () {
+    return view('template.app');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::prefix('admin')->middleware(['auth', 'auth.admin'])->group( function() {
+    //Route Khusus Admin
+
+});
+
+Route::prefix('operator')->middleware(['auth', 'auth.operator'])->group( function() {
+    //Route Khusus Operator
+    Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('operator.beranda');
+    Route::resource('user', UserController::class);
+    Route::resource('wali', WaliController::class);
+});
+Route::prefix('wali')->middleware(['auth', 'auth.wali'])->group( function() {
+    //Route Khusus Wali
+    Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('wali.beranda');
+});
+
+
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/'); 
+})->name('logout');
+
+require __DIR__.'/auth.php';
