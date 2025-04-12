@@ -50,7 +50,10 @@ class TagihanController extends Controller
             'button' => 'Simpan',
             'angkatan'  => Santri::pluck('angkatan', 'angkatan'),
             'program'   => Santri::pluck('program', 'program'),
-            'biaya'     => Biaya::pluck('nama', 'id')
+           'biaya' => \App\Models\Biaya::all()->mapWithKeys(function ($item) {
+    return [$item->id => $item->nama . ' - Rp' . number_format($item->jumlah, 0, ',', '.')];
+}),
+
         ]);
     }
     
