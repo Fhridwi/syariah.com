@@ -76,6 +76,12 @@
                 <div data-i18n="Analytics">Data Wali Santri</div>
             </a>
         </li>
+        <li class="menu-item {{ \Route::is('santri.*') ? 'active' : '' }}">
+            <a href="{{ route('santri.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Data Santri</div>
+            </a>
+        </li>
         
         <!-- Logout -->
         <li class="menu-item {{ \Route::is('operator.beranda') ? 'active' : '' }}">
