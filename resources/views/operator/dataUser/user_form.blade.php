@@ -8,58 +8,68 @@
                     <h5 class="card-title text-primary">{{ $title }}</h5>
 
                     {{-- Tampilkan pesan error jika ada --}}
-
-
-                    {!! Form::model($model, ['route' => $route, 'method' => $method]) !!}
-
-                    {{-- Nama --}}
-                    <div class="mb-3">
-                        {!! Form::label('wali_id', 'Wali Santri') !!}
-                        {!! Form::text('name', null, ['class' => 'form-control' . ($errors->has('name') ? ' is-invalid' : ''), 'placeholder' => 'Masukkan nama']) !!}
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Email --}}
-                    <div class="mb-3">
-                        {!! Form::label('email', 'Email') !!}
-                        {!! Form::email('email', null, ['class' => 'form-control' . ($errors->has('email') ? ' is-invalid' : ''), 'placeholder' => 'Masukkan email']) !!}
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Nomor HP --}}
-                    <div class="mb-3">
-                        {!! Form::label('nohp', 'Nomor HP') !!}
-                        {!! Form::text('nohp', null, ['class' => 'form-control' . ($errors->has('nohp') ? ' is-invalid' : ''), 'placeholder' => '08xxxxxxxxxx']) !!}
-                        @error('nohp')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    @if (Route::is('user.create'))
-                        {{-- Hak Akses --}}
-                        <div class="mb-3">
-                            {!! Form::label('akses', 'Hak Akses') !!}
-                            {!! Form::select('akses', ['admin' => 'Admin', 'operator' => 'Operator', 'wali' => 'Wali'], null, ['class' => 'form-control' . ($errors->has('akses') ? ' is-invalid' : ''), 'placeholder' => 'Pilih hak akses']) !!}
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 
-                    {{-- Password --}}
-                    <div class="mb-3">
-                        {!! Form::label('password', 'Password') !!}
-                        {!! Form::password('password', ['class' => 'form-control' . ($errors->has('password') ? ' is-invalid' : ''), 'placeholder' => 'Masukkan password']) !!}
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <form action="{{ $route }}" method="{{ $method }}">
+                        {{-- Nama Wali Santri --}}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nama Wali Santri</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan nama wali santri" value="{{ old('name', $model->name) }}">
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    {{-- Tombol Submit --}}
-                    <button type="submit" class="btn btn-primary btn-sm">{{ $button ?? 'Simpan' }}</button>
+                        {{-- Email --}}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email" value="{{ old('email', $model->email) }}">
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    {!! Form::close() !!}
+                        {{-- Nomor HP --}}
+                        <div class="mb-3">
+                            <label for="nohp" class="form-label">Nomor HP</label>
+                            <input type="text" class="form-control" id="nohp" name="nohp" placeholder="08xxxxxxxxxx" value="{{ old('nohp', $model->nohp) }}">
+                            @error('nohp')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Hak Akses --}}
+                        @if (Route::is('user.create'))
+                            <div class="mb-3">
+                                <label for="akses" class="form-label">Hak Akses</label>
+                                <select class="form-control" id="akses" name="akses">
+                                    <option value="admin" {{ old('akses', $model->akses) == 'admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="operator" {{ old('akses', $model->akses) == 'operator' ? 'selected' : '' }}>Operator</option>
+                                    <option value="wali" {{ old('akses', $model->akses) == 'wali' ? 'selected' : '' }}>Wali</option>
+                                </select>
+                            </div>
+                        @endif
+
+                        {{-- Password --}}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Tombol Submit --}}
+                        <button type="submit" class="btn btn-primary btn-sm">{{ $button ?? 'Simpan' }}</button>
+                    </form>
                 </div>
             </div>
         </div>

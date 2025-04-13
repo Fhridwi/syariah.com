@@ -12,24 +12,18 @@
                             <i class="bx bx-plus"></i> Tambah Data
                         </a>
 
-                        {!! Form::open(['route' => $routePrefix . '.index', 'method' => 'GET', 'class' => 'd-flex']) !!}
-                        <div class="input-group input-group-merge">
-                            <span class="input-group-text" id="basic-addon-search31">
-                                <i class="bx bx-search"></i>
-                            </span>
-                            {!! Form::text('search', request('search'), [
-        'class' => 'form-control',
-        'placeholder' => 'Cari data...',
-        'aria-label' => 'Search...',
-        'aria-describedby' => 'basic-addon-search31'
-    ]) !!}
-                            <button type="submit" class="btn btn-sm btn-secondary">
-                                <i class="bx bx-search"></i> Cari
-                            </button>
-                        </div>
-                        {!! Form::close() !!}
+                        <form action="{{ route($routePrefix . '.index') }}" method="GET" class="d-flex">
+                            <div class="input-group input-group-merge">
+                                <span class="input-group-text" id="basic-addon-search31">
+                                    <i class="bx bx-search"></i>
+                                </span>
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari data..." aria-label="Search..." aria-describedby="basic-addon-search31">
+                                <button type="submit" class="btn btn-sm btn-secondary">
+                                    <i class="bx bx-search"></i> Cari
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
 
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -46,24 +40,19 @@
                                 @forelse ($models as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama}}
-                                            <x /td>
+                                        <td>{{ $item->nama }}</td>
                                         <td>Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                                         <td>{{ $item->user_id }}</td>
                                         <td>
-                                            <a href="{{ route($routePrefix . '.show', $item->id) }}"
-                                                class="btn btn-sm btn-info">
+                                            <a href="{{ route($routePrefix . '.show', $item->id) }}" class="btn btn-sm btn-info">
                                                 <i class="fa fa-edit"></i> Detail
                                             </a>
 
-                                            <a href="{{ route($routePrefix . '.edit', $item->id) }}"
-                                                class="btn btn-sm btn-warning">
+                                            <a href="{{ route($routePrefix . '.edit', $item->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="fa fa-edit"></i> Edit
                                             </a>
 
-                                            <form action="{{ route($routePrefix . '.destroy', $item->id) }}" method="POST"
-                                                style="display:inline-block;"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                            <form action="{{ route($routePrefix . '.destroy', $item->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-danger">

@@ -37,16 +37,21 @@
                             </table>
 
                             <h5 class="mt-4">Tambah Anak (Santri)</h5>
-                            {!! Form::open(['route' => 'walisantri.store', 'method' => 'POST']) !!}
-                            {!! Form::hidden('wali_id', $model->id) !!}
-                            <div class="input-group mb-3">
-                                {!! Form::select('santri_id', $santri, null, ['class' => 'form-control select2', 'placeholder' => 'Pilih Santri']) !!}
-                                <div class="input-group-append">
-                                    <button class="btn btn-sm mx-2 btn-primary" type="submit">Tambah</button>
+                            <form action="{{ route('walisantri.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="wali_id" value="{{ $model->id }}">
+                                <div class="input-group mb-3">
+                                    <select name="santri_id" class="form-control select2">
+                                        <option value="" disabled selected>Pilih Santri</option>
+                                        @foreach($santri as $id => $name)
+                                            <option value="{{ $id }}">{{ $name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-sm mx-2 btn-primary">Tambah</button>
+                                    </div>
                                 </div>
-                            </div>
-                        {!! Form::close() !!}
-                        
+                            </form>
                         </div>
                     </div>
 
@@ -67,12 +72,12 @@
                                     <td>{{ $santri->program }}</td>
                                     <td>{{ $santri->sekolah }}</td>
                                     <td class="d-flex mx-2">
- <!-- #region -->                                    
-                                        {!! Form::open(['route' => ['walisantri.update', $santri->id], 'method' => 'PUT', 'onsubmit' => 'return confirm("Yakin ingin menghapus santri ini?")']) !!}
+                                        <form action="{{ route('walisantri.update', $santri->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus santri ini?')">
+                                            @method('PUT')
+                                            @csrf
                                             <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                        {!! Form::close() !!}
+                                        </form>
                                     </td>
-                                    
                                 </tr>
                             @empty
                                 <tr>
@@ -88,5 +93,3 @@
         </div>
     </div>
 @endsection
-
-

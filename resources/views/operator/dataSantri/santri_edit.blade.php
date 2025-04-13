@@ -18,12 +18,14 @@
                     </div>
                 @endif
 
-                {!! Form::model($model, ['route' => $route, 'method' => $method, 'files' => true]) !!}
+                <form action="{{ route($route) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method($method)
 
                     {{-- Nama Santri --}}
                     <div class="mb-3">
-                        {!! Form::label('nama', 'Nama Santri') !!}
-                        {!! Form::text('nama', null, ['class' => 'form-control' . ($errors->has('nama') ? ' is-invalid' : ''), 'placeholder' => 'Masukkan nama santri']) !!}
+                        <label for="nama">Nama Santri</label>
+                        <input type="text" name="nama" id="nama" class="form-control{{ $errors->has('nama') ? ' is-invalid' : '' }}" placeholder="Masukkan nama santri" value="{{ old('nama', $model->nama) }}">
                         @error('nama')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -31,8 +33,8 @@
 
                     {{-- NIS --}}
                     <div class="mb-3">
-                        {!! Form::label('nis', 'NIS') !!}
-                        {!! Form::text('nis', null, ['class' => 'form-control' . ($errors->has('nis') ? ' is-invalid' : ''), 'placeholder' => 'Masukkan NIS']) !!}
+                        <label for="nis">NIS</label>
+                        <input type="text" name="nis" id="nis" class="form-control{{ $errors->has('nis') ? ' is-invalid' : '' }}" placeholder="Masukkan NIS" value="{{ old('nis', $model->nis) }}">
                         @error('nis')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -40,21 +42,22 @@
 
                     {{-- Program --}}
                     <div class="mb-3">
-                        {!! Form::label('program', 'Program') !!}
-                        {!! Form::text('program', null, ['class' => 'form-control' . ($errors->has('program') ? ' is-invalid' : ''), 'placeholder' => 'Contoh: RPL, Multimedia']) !!}
+                        <label for="program">Program</label>
+                        <input type="text" name="program" id="program" class="form-control{{ $errors->has('program') ? ' is-invalid' : '' }}" placeholder="Contoh: RPL, Multimedia" value="{{ old('program', $model->program) }}">
                         @error('program')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                  
                     {{-- Angkatan --}}
                     <div class="mb-3">
-                        {!! Form::label('angkatan', 'Angkatan') !!}
-                        {!! Form::selectRange('angkatan', date('Y'), date('Y') - 5, null, [
-                        'class' => 'form-control' . ($errors->has('angkatan') ? ' is-invalid' : ''),
-                        'placeholder' => 'Pilih angkatan'
-                    ]) !!}
+                        <label for="angkatan">Angkatan</label>
+                        <select name="angkatan" id="angkatan" class="form-control{{ $errors->has('angkatan') ? ' is-invalid' : '' }}">
+                            <option value="">Pilih angkatan</option>
+                            @for ($year = date('Y'); $year >= date('Y') - 5; $year--)
+                                <option value="{{ $year }}" {{ old('angkatan', $model->angkatan) == $year ? 'selected' : '' }}>{{ $year }}</option>
+                            @endfor
+                        </select>
                         @error('angkatan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -62,8 +65,13 @@
 
                     {{-- Akun Wali --}}
                     <div class="mb-3">
-                        {!! Form::label('user_id', 'Akun Wali') !!}
-                        {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'placeholder' => 'Pilih wali santri']) !!}
+                        <label for="user_id">Akun Wali</label>
+                        <select name="user_id" id="user_id" class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}">
+                            <option value="">Pilih wali santri</option>
+                            @foreach ($users as $id => $name)
+                                <option value="{{ $id }}" {{ old('user_id', $model->user_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                            @endforeach
+                        </select>
                         @error('user_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -71,25 +79,23 @@
 
                     {{-- Foto --}}
                     <div class="mb-3">
-                        {!! Form::label('foto', 'Foto Santri') !!}
-                        
-                        {{-- Preview Foto jika ada --}}
+                        <label for="foto">Foto Santri</label>
+
                         @if ($model->foto)
                             <div class="mb-2">
                                 <img src="{{ asset('storage/' . $model->foto) }}" alt="Foto Santri" width="120" class="img-thumbnail">
                             </div>
                         @endif
 
-                        {!! Form::file('foto', ['class' => 'form-control' . ($errors->has('foto') ? ' is-invalid' : '')]) !!}
+                        <input type="file" name="foto" id="foto" class="form-control{{ $errors->has('foto') ? ' is-invalid' : '' }}">
                         @error('foto')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    {{-- Tombol Simpan --}}
+                    {{-- Tombol Submit --}}
                     <button type="submit" class="btn btn-primary btn-sm">{{ $button ?? 'Simpan' }}</button>
-
-                {!! Form::close() !!}
+                </form>
             </div>
         </div>
     </div>
