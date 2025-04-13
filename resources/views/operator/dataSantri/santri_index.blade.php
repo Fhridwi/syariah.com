@@ -12,26 +12,23 @@
                             <i class="bx bx-plus"></i> Tambah Data
                         </a>
 
-                        <form action="{{ route($routePrefix . '.index') }}" method="GET" class="d-flex">
-                            <div class="input-group input-group-merge">
-                                <span class="input-group-text" id="basic-addon-search31">
-                                    <i class="bx bx-search"></i>
-                                </span>
-                                <input
-                                    type="text"
-                                    name="search"
-                                    value="{{ request('search') }}"
-                                    class="form-control"
-                                    placeholder="Cari data..."
-                                    aria-label="Search..."
-                                    aria-describedby="basic-addon-search31"
-                                >
-                                <button type="submit" class="btn btn-sm btn-secondary">
-                                    <i class="bx bx-search"></i> Cari
-                                </button>
-                            </div>
-                        </form>
-                        
+                        {!! Form::open(['route' => $routePrefix . '.index', 'method' => 'GET', 'class' => 'd-flex']) !!}
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text" id="basic-addon-search31">
+                                <i class="bx bx-search"></i>
+                            </span>
+                            {!! Form::text('search', request('search'), [
+                                'class' => 'form-control',
+                                'placeholder' => 'Cari data...',
+                                'aria-label' => 'Search...',
+                                'aria-describedby' => 'basic-addon-search31'
+                            ]) !!}
+                            <button type="submit" class="btn btn-sm btn-secondary">
+                                <i class="bx bx-search"></i> Cari
+                            </button>
+                        </div>
+                        {!! Form::close() !!}
+                    </div>
 
 
                     <div class="table-responsive">

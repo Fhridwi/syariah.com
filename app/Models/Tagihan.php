@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tagihan extends Model
 {
+
+    protected $guarded = [];
+    protected $dates = ['tanggal_tagihan', 'tanggal_jatuh_tempo'];
     protected $fillable = [
         'santri_id', 'user_id', 'angkatan', 'program',
         'tanggal_tagihan', 'tanggal_jatuh_tempo',
@@ -22,4 +25,16 @@ class Tagihan extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted()
+{
+    static::creating(function($biaya) {
+        $biaya->user_id = auth()->user()->id;
+    });
+
+    static::updating(function($biaya) {
+        $biaya->user_id = auth()->user()->id;
+    });
+}
+
 }

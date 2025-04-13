@@ -11,7 +11,7 @@ class StoreTagihanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,16 +22,12 @@ class StoreTagihanRequest extends FormRequest
     public function rules(): array
 {
     return [
-        'santri_id' => 'required|exists:santris,id',
-        'angkatan' => 'required|integer',
-        'program' => 'required|integer',
-        'tanggal_tagihan' => 'required|date',
-        'tanggal_jatuh_tempo' => 'required|date',
-        'nama_biaya' => 'required|string',
-        'jumlah_biaya' => 'required|numeric|min:0',
-        'denda' => 'nullable|numeric|min:0',
-        'status' => 'required|in:baru,angsuran,lunas',
-        'keterangan' => 'nullable|string',
+            'jumlah_biaya.*' => 'required',
+            'angkatan'       => 'nullable|numeric',
+            'program'        => 'nullable|string',
+            'tanggal_tagihan'=> 'required|date',
+            'tanggal_jatuh_tempo'=> 'required|date',
+            'keterangan'    => 'nullable|string'
     ];
 }
 
