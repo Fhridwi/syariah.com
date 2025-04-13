@@ -15,10 +15,7 @@
                         {!! Form::open(['route' => $routePrefix . '.index', 'method' => 'GET', 'class' => 'd-flex']) !!}
                         <div class="row w-100">
                             <div class="col">
-                                {!! Form::select('tahun', range(date('Y'), 2020), request('tahun'), [
-                                    'class' => 'form-control',
-                                    'placeholder' => 'Pilih Tahun'
-                                ]) !!}
+                                {!! Form::selectRange('tahun', 2022, now()->year + 1, request('tahun'), ['class' => 'form-control']) !!}
                             </div>
                             <div class="col">
                                 {!! Form::select('bulan', [
@@ -69,8 +66,8 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->santri->nis }}</td>
-                                        <td>{{ $item->nama_biaya }}</td>
-                                        <td>Rp {{ number_format($item->jumlah_biaya, 0, ',', '.') }}</td>
+                                        <td>{{ $item->tagihanDetail->nama_biaya }}</td>
+                                        <td>Rp {{ number_format($item->tagihanDetail->jumlah_biaya ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $item->santri->nama ?? '-' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_tagihan)->format('d-F-Y') }}</td>
                                         <td>
@@ -80,12 +77,18 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{{ route($routePrefix . '.show', $item->id) }}" class="btn btn-sm btn-info">
+                                            <a href="{{ route($routePrefix . '.show', [
+                                                $item->santri,
+                                                'siswa_id' => $item->siswa_id,
+                                                'bulan'    => request('bulan'),
+                                                'tahun'    => request('tahun'),
+                                            ]) }}" class="btn btn-sm btn-info">
                                                 <i class="fa fa-eye"></i> Detail
                                             </a>
-                                            <a href="{{ route($routePrefix . '.edit', $item->id) }}" class="btn btn-sm btn-warning">
+                                            
+                                            {{-- <a href="{{ route($routePrefix . '.edit', $item->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="fa fa-edit"></i> Edit
-                                            </a>
+                                            </a> --}}
                                             <form action="{{ route($routePrefix . '.destroy', $item->id) }}" method="POST"
                                                 style="display:inline-block;"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">

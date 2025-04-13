@@ -8,8 +8,10 @@ use App\Http\Requests\UpdateTagihanRequest;
 use App\Models\Biaya;
 use App\Models\Santri;
 use App\Models\Tagihan;
+use App\Models\TagihanDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TagihanController extends Controller
 {
@@ -22,19 +24,13 @@ class TagihanController extends Controller
     public function index(Request $request)
     {
         $tahun = $request->get('tahun');
-$bulan = $request->get('bulan');
-
-$tagihans = Tagihan::with('user', 'santri')
-    ->when($tahun, function ($query) use ($tahun) {
-        $query->whereYear('tanggal_tagihan', $tahun);
-    })
-    ->when($bulan, function ($query) use ($bulan) {
-        $query->whereMonth('tanggal_tagihan', $bulan);
-    })
-    ->groupBy('santri_id')
-    ->latest()
-    ->paginate(50);
-
+        $bulan = $request->get('bulan');
+        $tagihans = Tagihan::with(['user', 'santri', 'tagihanDetail'])
+        ->when($tahun, fn($q) => $q->whereYear('tanggal_tagihan', $tahun))
+        ->when($bulan, fn($q) => $q->whereMonth('tanggal_tagihan', $bulan))
+        ->latest()
+        ->paginate(50);
+    
     
         return view($this->viewFolder . 'tagihan_index', [
             'models' => $tagihans,
@@ -54,84 +50,98 @@ $tagihans = Tagihan::with('user', 'santri')
             'santris' => \App\Models\Santri::pluck('nama', 'id'),
             'users' => \App\Models\User::pluck('name', 'id'),
             'title' => 'Tambah Tagihan',
-            'route' => route($this->routePrefix . '.store'), 
-            'method' => 'POST', 
+            'route' => route($this->routePrefix . '.store'),
+            'method' => 'POST',
             'button' => 'Simpan',
             'angkatan'  => Santri::pluck('angkatan', 'angkatan'),
-           'biaya' => \App\Models\Biaya::all()->mapWithKeys(function ($item) {
-    return [$item->id => $item->nama . ' - Rp' . number_format($item->jumlah, 0, ',', '.')];
-}),
+            'biaya' => \App\Models\Biaya::all()->mapWithKeys(function ($item) {
+                return [$item->id => $item->nama . ' - Rp' . number_format($item->jumlah, 0, ',', '.')];
+            }),
 
         ]);
     }
-    
-    
+
+
     public function store(StoreTagihanRequest $request)
-{
-    // validasi data
-    $requestData = $request->validated();
+    {
+        $requestData = $request->validated();
+        $biayaList = Biaya::whereIn('id', $requestData['jumlah_biaya'])->get();
 
-    // ambil ID biaya yang dipilih
-    $biayaIdArray = $requestData['jumlah_biaya'];
+        $santri = Santri::query();
+        if ($requestData['angkatan']) {
+            $santri->where('angkatan', $requestData['angkatan']);
+        }
+        $santri = $santri->get();
 
-    // ambil data santri berdasarkan angkatan
-    $santri = Santri::query();
+        if ($santri->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada santri ditemukan untuk angkatan tersebut.');
+        }
 
-    if ($requestData['angkatan']) {
-        $santri->where('angkatan', $requestData['angkatan']);
-    }
+        $tanggalTagihan = Carbon::parse($requestData['tanggal_tagihan']);
+        $bulanTagihan = $tanggalTagihan->format('m');
+        $tahunTagihan = $tanggalTagihan->format('Y');
 
-    $santri = $santri->get();
-
-    foreach($santri as $item) {
-        $itemSantri = $item;
-        $biaya = Biaya::whereIn('id', $biayaIdArray)->get();
-        foreach($biaya as $itemBiaya) {
-            $dataTagihan = [
-                'santri_id'     => $itemSantri->id,
-                'angkatan'      => $requestData['angkatan'],
-                // 'program'       => $requestData['program'],
-                'tanggal_tagihan'=>  $requestData['tanggal_tagihan'],
-                'tanggal_jatuh_tempo'=>  $requestData['tanggal_jatuh_tempo'],
-                'nama_biaya'      => $itemBiaya->nama,
-                'jumlah_biaya'  => $itemBiaya->jumlah,
-                'keterangan'      => $requestData['keterangan'],
-                'status'        => 'baru'
-            ];
-           
-            $tanggalJatuhTempo = Carbon::parse($requestData['tanggal_jatuh_tempo']);
-            $tanggalTagihan = Carbon::parse($requestData['tanggal_tagihan']);
-            $bulanTagihan = $tanggalTagihan->format('m');
-            $tahunTagihan = $tanggalTagihan->format('Y');
-            $cekTagihan = Model::where('santri_id', $itemSantri->id)
-                    ->where( 'nama_biaya', $itemBiaya->nama)
+        DB::beginTransaction();
+        try {
+            foreach ($santri as $itemSantri) {
+                $cekTagihan = Tagihan::where('santri_id', $itemSantri->id)
                     ->whereMonth('tanggal_tagihan', $bulanTagihan)
                     ->whereYear('tanggal_tagihan', $tahunTagihan)
                     ->first();
 
-                if($cekTagihan == null) {
-                    Model::create($dataTagihan);
+                if (!$cekTagihan) {
+                    $tagihan = Tagihan::create([
+                        'santri_id'     => $itemSantri->id,
+                        'angkatan'      => $requestData['angkatan'],
+                        'tanggal_tagihan' => $requestData['tanggal_tagihan'],
+                        'tanggal_jatuh_tempo' => $requestData['tanggal_jatuh_tempo'],
+                        'keterangan'    => $requestData['keterangan'],
+                        'status'        => 'baru'
+                    ]);
+
+                    foreach ($biayaList as $biaya) {
+                        TagihanDetail::create([
+                            'tagihan_id'    => $tagihan->id,
+                            'nama_biaya'    => $biaya->nama,
+                            'jumlah_biaya'  => $biaya->jumlah,
+                        ]);
+                    }
                 }
+            }
+            DB::commit();
+            return redirect()->route('tagihan.index')->with('success', 'Data tagihan berhasil disimpan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal menyimpan data tagihan.');
         }
     }
-    return redirect()->route('tagihan.index')->with('success', 'Data tagihan berhasil disimpan.');
-}
 
-    
-    public function show($id)
+
+
+    public function show($id, Request $request)
     {
-        $model = Model::with(['user', 'santri'])->findOrFail($id);
-    
-        return view($this->viewFolder . 'tagihan_show', compact('model') + [
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+
+        $tagihan = Model::with(['user', 'santri'])
+            ->where('santri_id', $id)
+            ->when($bulan, fn($q) => $q->whereMonth('tanggal_tagihan', $bulan))
+            ->when($tahun, fn($q) => $q->whereYear('tanggal_tagihan', $tahun))
+            ->get();
+
+        return view($this->viewFolder . 'tagihan_show', [
             'title' => 'Detail Tagihan',
             'routePrefix' => $this->routePrefix,
+            'tagihan' => $tagihan,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
         ]);
     }
-    
+
     public function edit($id)
     {
         $model = Model::findOrFail($id);
-    
+
         return view($this->viewFolder . 'tagihan_edit', [
             'model' => $model,
             'santris' => \App\Models\Santri::pluck('nama', 'id'),
@@ -140,11 +150,11 @@ $tagihans = Tagihan::with('user', 'santri')
             'routePrefix' => $this->routePrefix,
         ]);
     }
-    
+
     public function update(Request $request, $id)
     {
         $model = Model::findOrFail($id);
-    
+
         $validated = $request->validate([
             'santri_id' => 'required',
             'user_id' => 'required',
@@ -158,18 +168,17 @@ $tagihans = Tagihan::with('user', 'santri')
             'denda' => 'required|numeric',
             'status' => 'required|in:baru,angsuran,lunas',
         ]);
-    
+
         $model->update($validated);
-    
+
         return redirect()->route($this->routePrefix . '.index')->with('success', 'Data tagihan berhasil diperbarui.');
     }
-    
+
     public function destroy($id)
     {
         $model = Model::findOrFail($id);
         $model->delete();
-    
+
         return redirect()->route($this->routePrefix . '.index')->with('success', 'Data tagihan berhasil dihapus.');
     }
-    
 }

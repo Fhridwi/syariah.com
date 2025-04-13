@@ -19,13 +19,9 @@ return new class extends Migration
             $table->integer('program');
             $table->date('tanggal_tagihan');
             $table->date('tanggal_jatuh_tempo');
-            $table->string('nama_biaya');
-            $table->double('jumlah_biaya');
             $table->string('keterangan')->nullable();
-            $table->double('denda');
+            $table->double('denda')->nullable();
             $table->enum('status', ['baru', 'angsuran', 'lunas']);
-
-
             $table->timestamps();
         });
     }

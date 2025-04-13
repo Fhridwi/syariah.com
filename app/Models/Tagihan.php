@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Dom\Comment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,6 +26,12 @@ class Tagihan extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Ganti jadi
+public function tagihanDetail()
+{
+    return $this->hasOne(TagihanDetail::class);
+}
 
     protected static function booted()
 {
