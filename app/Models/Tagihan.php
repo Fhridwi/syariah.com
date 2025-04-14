@@ -27,20 +27,20 @@ class Tagihan extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Ganti jadi
-public function tagihanDetail()
-{
-    return $this->hasOne(TagihanDetail::class);
-}
+        // Ganti jadi
+    public function tagihanDetail()
+    {
+        return $this->hasOne(TagihanDetail::class);
+    }
 
-public function TagihanDetails()
-{
-    return $this->hasMany(TagihanDetail::class);
-}
-public function Pembayaran()
-{
-    return $this->hasMany(Pembayaran::class);
-}
+    public function TagihanDetails()
+    {
+        return $this->hasMany(TagihanDetail::class);
+    }
+    public function Pembayaran()
+    {
+        return $this->hasMany(Pembayaran::class);
+    }
 
 
     protected static function booted()

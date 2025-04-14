@@ -57,45 +57,68 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <!-- Dashboard -->
-        <li class="menu-item {{ \Route::is('operator.beranda') ? 'active' : '' }}">
-            <a href="{{ route('operator.beranda') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Analytics">Beranda</div>
-            </a>
-        </li>
-        <li class="menu-item {{ \Route::is('user.*') ? 'active' : '' }}">
-            <a href="{{ route('user.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Data User</div>
-            </a>
-        </li>
-        <li class="menu-item {{ \Route::is('wali.*') ? 'active' : '' }}">
-            <a href="{{ route('wali.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Data Wali Santri</div>
-            </a>
-        </li>
-        <li class="menu-item {{ \Route::is('santri.*') ? 'active' : '' }}">
-            <a href="{{ route('santri.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Data Santri</div>
-            </a>
-        </li>
-        <li class="menu-item {{ \Route::is('biaya.*') ? 'active' : '' }}">
-            <a href="{{ route('biaya.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Data Biaya</div>
-            </a>
-        </li>
-        <li class="menu-item {{ \Route::is('tagihan.*') ? 'active' : '' }}">
-            <a href="{{ route('tagihan.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Data Tagihan</div>
-            </a>
-        </li>
+        <ul class="menu-inner py-1">
+
+            {{-- Untuk akses Operator/Admin --}}
+            @if (auth()->user()->akses === 'admin' || auth()->user()->akses === 'operator')
+                <!-- Dashboard -->
+                <li class="menu-item {{ \Route::is('operator.beranda') ? 'active' : '' }}">
+                    <a href="{{ route('operator.beranda') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-collection"></i>
+                        <div data-i18n="Analytics">Beranda</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ \Route::is('user.*') ? 'active' : '' }}">
+                    <a href="{{ route('user.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user"></i>
+                        <div data-i18n="Analytics">Data User</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ \Route::is('wali.*') ? 'active' : '' }}">
+                    <a href="{{ route('wali.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user-pin"></i>
+                        <div data-i18n="Analytics">Data Wali Santri</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ \Route::is('santri.*') ? 'active' : '' }}">
+                    <a href="{{ route('santri.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user-voice"></i>
+                        <div data-i18n="Analytics">Data Santri</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ \Route::is('biaya.*') ? 'active' : '' }}">
+                    <a href="{{ route('biaya.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-money"></i>
+                        <div data-i18n="Analytics">Data Biaya</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ \Route::is('tagihan.*') ? 'active' : '' }}">
+                    <a href="{{ route('tagihan.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-file"></i>
+                        <div data-i18n="Analytics">Data Tagihan</div>
+                    </a>
+                </li>
+            @endif
         
-        <!-- Logout -->
+            {{-- Untuk akses Wali Santri --}}
+            @if (auth()->user()->akses === 'wali')
+                 <li class="menu-item {{ \Route::is('wali.beranda') ? 'active' : '' }}">
+                    <a href="{{ route('wali.beranda') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-home"></i>
+                        <div data-i18n="Analytics">Dashboard</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ \Route::is('wali.wali-santri.*') ? 'active' : '' }}">
+                    <a href="{{ route('wali.wali-santri.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user-voice"></i>
+                        <div data-i18n="Analytics">Data Santri</div>
+                    </a>
+                </li>
+                
+            @endif
+        
+
+              <!-- Logout -->
         <li class="menu-item {{ \Route::is('operator.beranda') ? 'active' : '' }}">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

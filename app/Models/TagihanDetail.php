@@ -9,4 +9,9 @@ class TagihanDetail extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function tagihan()
+    {
+        return $this->belongsTo(Tagihan::class);
+    }
 }

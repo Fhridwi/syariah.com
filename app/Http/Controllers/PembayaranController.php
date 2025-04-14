@@ -29,35 +29,35 @@ class PembayaranController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StorePembayaranRequest $request)
-{
-    $requestData = $request->validated();
-
-    // Tentukan status konfirmasi dan metode pembayaran
-    $requestData['status_konfirmasi'] = 'sudah';
-    $requestData['metode_pembayaran'] = 'manual';
-
-    // Ambil data tagihan berdasarkan tagihan_id yang dikirim
-    $tagihan = Tagihan::findOrFail($requestData['tagihan_id']);
-
-    // Ambil total tagihan yang harus dibayar
-    $totalTagihan = $tagihan->tagihanDetails->sum('jumlah_biaya');
-
-    // Tentukan status pembayaran berdasarkan jumlah yang dibayar
-    if ($requestData['jumlah_bayar'] >= $totalTagihan) {
-        $tagihan->status = 'lunas';
-    } else {
-        $tagihan->status = 'angsuran';
+    {
+        $requestData = $request->validated();
+    
+        // Default metode dan status konfirmasi
+        $requestData['status_konfirmasi'] = 'sudah';
+        $requestData['metode_pembayaran'] = 'manual';
+    
+        // Ambil tagihan
+        $tagihan = Tagihan::findOrFail($requestData['tagihan_id']);
+        $totalTagihan = $tagihan->tagihanDetails->sum('jumlah_biaya');
+    
+        // Simpan pembayaran terlebih dahulu
+        $pembayaranBaru = Pembayaran::create($requestData);
+    
+        // Hitung total seluruh pembayaran (termasuk yang baru saja disimpan)
+        $totalDibayar = $tagihan->pembayaran()->sum('jumlah_bayar');
+    
+        // Update status tagihan berdasarkan total yang dibayar
+        if ($totalDibayar >= $totalTagihan) {
+            $tagihan->status = 'lunas';
+        } else {
+            $tagihan->status = 'angsuran';
+        }
+    
+        $tagihan->save();
+    
+        return redirect()->back()->with('success', 'Pembayaran berhasil disimpan.');
     }
-
-    // Simpan perubahan status pada tagihan
-    $tagihan->save();
-
-    // Simpan data pembayaran
-    Pembayaran::create($requestData);
-
-    // Redirect kembali dengan pesan sukses
-    return redirect()->back()->with('success', 'Pembayaran berhasil disimpan.');
-}
+    
 
     
 

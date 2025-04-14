@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BerandaOperatorController;
 use App\Http\Controllers\BiayaController;
+use App\Http\Controllers\KartuSyariahController;
 use App\Http\Controllers\KwitansiPembayaran;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SantriController;
 use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Wali\SantriWaliController;
 use App\Http\Controllers\WaliController;
 use App\Http\Controllers\WaliSantriController;
 use Illuminate\Support\Facades\Auth;
@@ -56,10 +59,16 @@ Route::prefix('operator')->middleware(['auth', 'auth.operator'])->group( functio
     Route::resource('pembayaran', PembayaranController::class);
     Route::get('kwitansi-pembayaran/{id}', [KwitansiPembayaran::class, 'show'])
     ->name('kwitansipembayaran.show');
+    Route::get('kartusyariah', [KartusyariahController::class, 'index'])->name('kartusyariah.index');
+
 });
-Route::prefix('wali')->middleware(['auth', 'auth.wali'])->group( function() {
+
+Route::get('login-wali', [AuthenticatedSessionController::class, 'createWali'])->name('login.wali');
+
+Route::prefix('wali')->middleware(['auth', 'auth.wali'])->name('wali.')->group( function() {
     //Route Khusus Wali
-    Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('wali.beranda');
+    Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('beranda');
+    Route::resource('wali-santri', SantriWaliController::class);
 });
 
 

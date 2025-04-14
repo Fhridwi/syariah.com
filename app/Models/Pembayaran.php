@@ -10,9 +10,20 @@ class Pembayaran extends Model
     use HasFactory;
     protected $guarded = [];
     protected $dates= ['tanggal_bayar'];
+    protected $with = ['user', 'tagihan'];
 
-    public function tagihan() {
-        return $this->belongsTo(Pembayaran::class);
+    public function tagihan()
+    {
+        return $this->belongsTo(Tagihan::class);
+    }
+
+    public function tagihanDetail()
+    {
+        return $this->hasManyThrough(TagihanDetail::class, Tagihan::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 
     protected static function booted()

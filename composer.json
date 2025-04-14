@@ -11,7 +11,8 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "laravelcollective/html": "^6.4",
-        "nicolaslopezj/searchable": "^1.13"
+        "nicolaslopezj/searchable": "^1.13",
+        "riskihajar/terbilang": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
@@ -32,6 +33,7 @@
             "Database\\Seeders\\": "database/seeders/"
         }
     },
+    
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
