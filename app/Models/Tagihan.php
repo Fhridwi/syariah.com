@@ -33,6 +33,16 @@ public function tagihanDetail()
     return $this->hasOne(TagihanDetail::class);
 }
 
+public function TagihanDetails()
+{
+    return $this->hasMany(TagihanDetail::class);
+}
+public function Pembayaran()
+{
+    return $this->hasMany(Pembayaran::class);
+}
+
+
     protected static function booted()
 {
     static::creating(function($biaya) {

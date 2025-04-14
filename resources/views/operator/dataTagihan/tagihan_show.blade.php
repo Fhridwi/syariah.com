@@ -28,80 +28,118 @@
         </div>
 
         {{-- Bagian bawah: Flex antara Tagihan & Kartu Syariah --}}
-        <div class="col-12">
-            <div class="d-flex flex-wrap gap-4">
-
-                {{-- Kiri: Tabel Tagihan --}}
-                <div class="flex-fill" style="min-width: 60%">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">Daftar Tagihan</h5>
-
-                            @if($bulan && $tahun)
-                                <p class="text-muted">Tagihan bulan
-                                    <strong>{{ \Carbon\Carbon::create()->month($bulan)->translatedFormat('F') }}</strong> tahun
-                                    <strong>{{ $tahun }}</strong>.
-                                </p>
-                            @endif
-
-                            @if ($tagihan->count() > 0)
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-light">
+        <div class="row mb-5">
+            
+            {{-- Kiri: DATA TAGIHAN --}}
+            <div class="col-md-12 col-lg-6 mb-3">
+                <div class="card">
+                    <h5 class="card-header text-primary">DATA TAGIHAN</h5>
+                    <div class="card-body">
+                        @if($tagihan && $tagihan->tagihanDetails->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tagihan</th>
+                                            <th>Nominal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($tagihan->tagihanDetails as $item)
                                             <tr>
-                                                <th>No</th>
-                                                <th>Nama Biaya</th>
-                                                <th>Nominal</th>
-                                                <th>Status</th>
-                                                <th>Tanggal</th>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $item->nama_biaya }}</td>
+                                                <td>Rp {{ number_format($item->jumlah_biaya, 0, ',', '.') }}</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($tagihan as $key => $item)
-                                                <tr>
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $item->nama_biaya }}</td>
-                                                    <td>Rp {{ number_format($item->jumlah_biaya, 0, ',', '.') }}</td>
-                                                    <td>
-                                                        <span class="badge bg-{{ $item->status == 'Lunas' ? 'success' : 'warning' }}">
-                                                            {{ ucfirst(strtolower($item->status)) }}
-                                                        </span>
-                                                    </td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_tagihan)->format('d-m-Y') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2">Total Pembayaran</td>
+                                            <td>Rp {{ number_format($tagihan->tagihanDetails->sum('jumlah_biaya'), 0, ',', '.') }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>TANGGAL</th>
+                                            <th>JUMLAH</th>
+                                            <th>METODE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($tagihan->pembayaran as $item)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ route('kwitansipembayaran.show', $item->id ) }}" target="_blank"> <i class="fa fa-print"></i> </a>
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d-m-Y') }}</td>
+                                                <td>{{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
+                                                <td>{{ $item->metode_pembayaran }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+
+                                <h5>Status Pembayaran: {{ $tagihan->status }}</h5>
+                            </div>
+
+                            {{-- Form Pembayaran --}}
+                            <h5 class="card-header text-primary">DATA TAGIHAN</h5>
+                            
+                            <form action="{{ route('pembayaran.store') }}" method="POST">
+                                @csrf
+
+                                <input type="hidden" name="tagihan_id" value="{{ $tagihan->id }}">
+                            
+                                <div class="mb-3">
+                                    <label for="tanggal_bayar" class="form-label">Tanggal Bayar</label>
+                                    <input type="date"
+                                           name="tanggal_bayar"
+                                           id="tanggal_bayar"
+                                           class="form-control"
+                                           value="{{ old('tanggal_bayar', \Carbon\Carbon::now()->format('Y-m-d')) }}"
+                                           required>
                                 </div>
-                            @else
-                                <div class="alert alert-info mt-3">
-                                    Tidak ada tagihan pada bulan dan tahun yang dipilih.
+                            
+                                <div class="mb-3">
+                                    <label for="jumlah_bayar" class="form-label">Jumlah Dibayarkan</label>
+                                    <input type="number"
+                                           name="jumlah_bayar"
+                                           id="jumlah_bayar"
+                                           class="form-control"
+                                           placeholder="Masukkan jumlah pembayaran"
+                                           required>
                                 </div>
-                            @endif
-                        </div>
+                            
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </form>
+
+                        @else
+                            <div class="alert alert-info mb-0">Belum ada data tagihan tersedia.</div>
+                        @endif
                     </div>
                 </div>
-
-                {{-- Kanan: Kartu Syariah --}}
-                <div class="flex-grow-1" style="min-width: 35%">
-                    <div class="card border border-success">
-                        <div class="card-body">
-                            <h5 class="card-title text-success">Kartu Syariah</h5>
-                            <p class="text-muted">Fitur syariah atau informasi lainnya ditaruh di sini...</p>
-                            <ul>
-                                <li>Info infaq</li>
-                                <li>Donasi</li>
-                                <li>Laporan spiritual</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
-            <a href="{{ route('tagihan.index') }}" class="btn btn-secondary mt-4">
-                <i class="bx bx-arrow-back"></i> Kembali
-            </a>
+            {{-- Kanan: KARTU SYARIAH --}}
+            <div class="col-md-12 col-lg-6 mb-3">
+                <div class="card border">
+                    <h5 class="card-header text-primary">KARTU SYARIAH</h5>
+                    <div class="card-body">
+                        <ul>
+                            <li>Info infaq</li>
+                            <li>Donasi</li>
+                            <li>Laporan spiritual</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 @endsection

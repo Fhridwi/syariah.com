@@ -7,8 +7,8 @@
                 <div class="card-body">
                     <h5 class="card-title text-primary">{{ $title }}</h5>
                     <a href="{{ route($routePrefix . '.create') }}" class="btn btn-sm btn-primary">Tambah Data</a>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
+             <div class="table-responsive" style="overflow-x: auto;">
+    <table class="table table-striped" style="min-width: 800px;">
                             <thead>
                                 <tr>
                                     <th>No</th>

@@ -6,6 +6,7 @@ use App\Models\Tagihan as Model;
 use App\Http\Requests\StoreTagihanRequest;
 use App\Http\Requests\UpdateTagihanRequest;
 use App\Models\Biaya;
+use App\Models\Pembayaran;
 use App\Models\Santri;
 use App\Models\Tagihan;
 use App\Models\TagihanDetail;
@@ -123,11 +124,12 @@ class TagihanController extends Controller
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
-        $tagihan = Model::with(['user', 'santri'])
+        $tagihan = Model::with(['user', 'santri','tagihanDetails', 'pembayaran'])
             ->where('santri_id', $id)
             ->when($bulan, fn($q) => $q->whereMonth('tanggal_tagihan', $bulan))
             ->when($tahun, fn($q) => $q->whereYear('tanggal_tagihan', $tahun))
-            ->get();
+            ->first();
+            $data['model'] = new Pembayaran();
 
         return view($this->viewFolder . 'tagihan_show', [
             'title' => 'Detail Tagihan',
@@ -135,6 +137,7 @@ class TagihanController extends Controller
             'tagihan' => $tagihan,
             'bulan' => $bulan,
             'tahun' => $tahun,
+            'data'  => $data,
         ]);
     }
 

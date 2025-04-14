@@ -53,11 +53,10 @@
                                 <tr>
                                     <th>No</th>
                                     <th>nis</th>
-                                    <th>Nama Biaya</th>
-                                    <th>Jumlah</th>
                                     <th>Santri</th>
                                     <th>Tanggal</th>
                                     <th>Status</th>
+                                    <th>Total</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -66,8 +65,6 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->santri->nis }}</td>
-                                        <td>{{ $item->tagihanDetail->nama_biaya }}</td>
-                                        <td>Rp {{ number_format($item->tagihanDetail->jumlah_biaya ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $item->santri->nama ?? '-' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_tagihan)->format('d-F-Y') }}</td>
                                         <td>
@@ -76,9 +73,10 @@
                                                 {{ ucfirst($item->status) }}
                                             </span>
                                         </td>
+                                        <td>Rp {{ number_format(optional($item->TagihanDetails)->sum('jumlah_biaya'), 0, ',', '.') }}</td>
                                         <td>
                                             <a href="{{ route($routePrefix . '.show', [
-                                                $item->santri,
+                                                $item->id,
                                                 'siswa_id' => $item->siswa_id,
                                                 'bulan'    => request('bulan'),
                                                 'tahun'    => request('tahun'),
