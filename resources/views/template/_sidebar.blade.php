@@ -114,6 +114,12 @@
                         <div data-i18n="Analytics">Data Santri</div>
                     </a>
                 </li>
+                <li class="menu-item {{ \Route::is('wali.tagihan.*') ? 'active' : '' }}">
+                    <a href="{{ route('wali.tagihan.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user-voice"></i>
+                        <div data-i18n="Analytics">Data Tagihan</div>
+                    </a>
+                </li>
                 
             @endif
         

@@ -42,6 +42,17 @@ class Tagihan extends Model
         return $this->hasMany(Pembayaran::class);
     }
 
+    public function getStatusTagihanWali()
+    {
+        if($this->status == 'baru') {
+            return 'Belum Dibayar';
+        }
+        if($this->status == 'lunas') {
+            return 'Sudah Dibayar';
+        }
+        return $this->status;
+    }
+
 
     protected static function booted()
 {

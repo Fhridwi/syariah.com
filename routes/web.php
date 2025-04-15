@@ -11,6 +11,7 @@ use App\Http\Controllers\SantriController;
 use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Wali\SantriWaliController;
+use App\Http\Controllers\Wali\WaliSantriTagihanController;
 use App\Http\Controllers\WaliController;
 use App\Http\Controllers\WaliSantriController;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,7 @@ Route::prefix('wali')->middleware(['auth', 'auth.wali'])->name('wali.')->group( 
     //Route Khusus Wali
     Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('beranda');
     Route::resource('wali-santri', SantriWaliController::class);
+    Route::resource('tagihan', WaliSantriTagihanController::class);
 });
 
 

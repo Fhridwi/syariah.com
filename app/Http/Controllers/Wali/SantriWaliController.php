@@ -10,6 +10,6 @@ class SantriWaliController extends Controller
 {
     public function index() {
         $data['models'] = Auth::user()->santri;
-        return view('wali.santri_index', $data);
+        return view('wali.dataSantri.santri_index', $data);
     }
 }

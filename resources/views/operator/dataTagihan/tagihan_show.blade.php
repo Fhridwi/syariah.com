@@ -34,12 +34,8 @@
             
         </div>
     </div>
-</div>
-
-
-        {{-- Bagian bawah: Flex antara Tagihan & Kartu Syariah --}}
+</div>{{-- Bagian bawah: Flex antara Tagihan & Kartu Syariah --}}
         <div class="row mb-5">
-            
             {{-- Kiri: DATA TAGIHAN --}}
             <div class="col-md-12 col-lg-6 mb-3">
                 <div class="card">
@@ -72,15 +68,7 @@
                                     </tfoot>
                                 </table>
                              </div>
-                        </div>
-                </div>
-            </div>
-
-            {{-- Kanan: KARTU SYARIAH --}}
-            <div class="col-md-12 col-lg-6 mb-3">
-                <div class="card border">
-                    <div class="card-body">
-                        <h5 class="text-primary">DATA PEMBAYARAN</h5>
+                             <h5 class="text-primary mt-4">DATA PEMBAYARAN</h5>
                         <table class="table table-striped table-sm align-middle">
                             <thead class="table-light text-center">
                                 <tr>
@@ -146,9 +134,8 @@
                  @else
                      <div class="alert alert-info mb-0">Belum ada data tagihan tersedia.</div>
                  @endif
+                        </div>
                 </div>
             </div>
         </div>
-
-    </div>
 @endsection

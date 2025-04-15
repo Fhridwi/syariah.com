@@ -64,7 +64,7 @@
                                 @forelse ($models as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->santri->nis }}</td>
+                                        <td>{{ $item->santri->nis }}</td> 
                                         <td>{{ $item->santri->nama ?? '-' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_tagihan)->format('d-F-Y') }}</td>
                                         <td>
