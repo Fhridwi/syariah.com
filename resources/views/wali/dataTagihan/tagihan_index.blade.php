@@ -17,6 +17,7 @@
                                     <th>Angkatan</th>
                                     <th>Tanggal Tagihan</th>
                                     <th>Status Pembayaran</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -26,13 +27,19 @@
                                         <td>{{ $item->santri->nama }}</td>
                                         <td>{{ $item->santri->program }}</td>
                                         <td>{{ $item->santri->angkatan }}</td>
-                                        <td>{{ $item->tanggal_tagihan }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->tanggal_tagihan)->format('F Y') }}</td>
                                         <td>
                                             <span class="badge {{ $item->getStatusTagihanWali() == 'Belum Dibayar' ? 'bg-danger' : 'bg-success' }}">
                                                 {{ $item->getStatusTagihanWali() }}
                                             </span>
                                         </td>
-                                        
+                                        <td>
+                                            @if ($item->status == 'baru' || $item->status == 'angsuran')
+                                                <a href="{{ route('wali.tagihan.show', $item->id) }}" class="btn btn-sm btn-primary">Bayar</a>
+                                            @else
+                                                <span class="badge bg-success">Sudah Lunas</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>

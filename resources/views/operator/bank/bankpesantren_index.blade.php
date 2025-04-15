@@ -35,6 +35,10 @@
                                         <td>{{ $item->nama_rekening }}</td>
                                         <td>{{ $item->nomor_rekening }}</td>
                                         <td>
+                                            <a href="{{ route($routePrefix . '.edit', $item->id) }}" class="btn btn-sm btn-warning">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        
                                             <form action="{{ route($routePrefix . '.destroy', $item->id) }}" method="POST"
                                                 style="display:inline-block;"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
@@ -44,7 +48,7 @@
                                                     <i class="fa fa-trash"></i> Delete
                                                 </button>
                                             </form>
-                                        </td>
+                                        </td>                                        
                                     </tr>
                                 @empty
                                     <tr>
