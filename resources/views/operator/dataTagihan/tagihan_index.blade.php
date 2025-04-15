@@ -76,8 +76,7 @@
                                         <td>Rp {{ number_format(optional($item->TagihanDetails)->sum('jumlah_biaya'), 0, ',', '.') }}</td>
                                         <td>
                                             <a href="{{ route($routePrefix . '.show', [
-                                                $item->id,
-                                                'siswa_id' => $item->siswa_id,
+                                                $item->santri->id,
                                                 'bulan'    => request('bulan'),
                                                 'tahun'    => request('tahun'),
                                             ]) }}" class="btn btn-sm btn-info">

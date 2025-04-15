@@ -74,6 +74,12 @@
                         <div data-i18n="Analytics">Data User</div>
                     </a>
                 </li>
+                <li class="menu-item {{ \Route::is('bankpesantren.*') ? 'active' : '' }}">
+                    <a href="{{ route('bankpesantren.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user"></i>
+                        <div data-i18n="Analytics">Rekening Pesantren</div>
+                    </a>
+                </li>
                 <li class="menu-item {{ \Route::is('wali.*') ? 'active' : '' }}">
                     <a href="{{ route('wali.index') }}" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-user-pin"></i>

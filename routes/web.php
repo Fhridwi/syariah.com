@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BankPesantrenController;
 use App\Http\Controllers\BerandaOperatorController;
 use App\Http\Controllers\BiayaController;
 use App\Http\Controllers\KartuSyariahController;
@@ -51,6 +52,7 @@ Route::prefix('admin')->middleware(['auth', 'auth.admin'])->group( function() {
 Route::prefix('operator')->middleware(['auth', 'auth.operator'])->group( function() {
     //Route Khusus Operator
     Route::get('beranda', [BerandaOperatorController::class, 'index'])->name('operator.beranda');
+    Route::resource('bankpesantren', BankPesantrenController::class);
     Route::resource('user', UserController::class);
     Route::resource('wali', WaliController::class);
     Route::resource('santri', SantriController::class);
